@@ -8,15 +8,13 @@ app.use(express.static('main'));
 
 
 
-app.get('/test/:a', function(req, res){ // URL로 데이터 주고 받기
-    res.json({"test":1,"uid":req.params.a});
+// app.get('/test/:a', function(req, res){ // URL로 데이터 주고 받기
+//     res.json({"test":1,"uid":req.params.a});
+// });
+
+app.get('/server/hello', function(req,res){
+    res.json({"msg":"hello"});
 });
-
-app.get('/abc', function(req,res){
-    
-});
-
-
 
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, 'main', 'main.html'));
