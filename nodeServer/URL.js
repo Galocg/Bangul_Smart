@@ -7,6 +7,20 @@ const PORT = process.env.PORT = 8000;
 app.use(express.static('main'));
 
 
+var e = function(req, res, next){
+  console.log('new user');
+  next();
+};
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+     res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+     next();
+ });
+
+app.use(e);
+
 
 // app.get('/test/:a', function(req, res){ // URL로 데이터 주고 받기
 //     res.json({"test":1,"uid":req.params.a});

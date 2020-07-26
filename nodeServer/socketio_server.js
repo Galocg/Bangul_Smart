@@ -9,7 +9,6 @@ app.get('/', function(req, res){
 });
 
 var server = require('http').createServer(app);
-
 server.listen(3000);
 console.log("listening at localhost");
 

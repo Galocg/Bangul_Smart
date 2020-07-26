@@ -1,26 +1,64 @@
 const express = require('express');
 const path = require('path');
+
 const app = express();
+const PORT = process.env.PORT = 8000;
 
 app.use(express.static('main'));
 
-app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, 'main', 'client.html'));
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+       res.header("Access-Control-Allow-Headers", "X-Requested-With");
+       res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+       next();
+   });
+
+const logger = require('./main/middleware/logger.js');
+app.use(logger());
+
+var html;
+var js;
+const fs = require('fs');
+
+fs.readFile('./main/kakaoNew.html',"utf8",function(err,data){
+  if(err){
+      throw err;
+  }
+    html = data;
 });
 
-var server = require('http').createServer(app);
-server.listen(3000);
-console.log("listening at localhost");
+fs.readFile('./main/kakaoNew.js',"utf8",function(err,data){
+  if(err){
+      throw err;
+  }
+    js = data;
+});
 
-var socket = require('socket.io').listen(server);
 
-var num=0;
+app.get('/server/hello/:os', function(req,res){
+    res.json({"msg":req.params.os});
+    
+});
 
-socket.sockets.on('connection',function(client){
-    console.log('New Client Connection');
 
-    client.on('serverReceiver',function(value){
-        var msg = value+' '+num++;
-        socket.sockets.emit('clientReceiver',{msg:msg});
-    });
+
+
+app.get('/location/map', function(req,res){
+  console.log(html);
+
+  var kakaourl = "//dapi.kakao.com/v2/maps/sdk.js?appkey=aefdc433d657b3802f48149819d88496&libraries=services";
+
+  var msg = {'html':html, 'js':js, 'src':kakaourl};
+  var jsonData = JSON.stringify(msg);
+  res.send(jsonData);
+  //res.sendFile(path.join(__dirname, 'main', 'kakaoNew.html'));
+});
+
+
+app.get('/', function(req, res){
+    res.sendFile(path.join(__dirname, 'main', 'main.html'));
+});
+
+app.listen(PORT,"0.0.0.0",function(req,res){
+  console.log('Server is running at:',PORT);
 });
