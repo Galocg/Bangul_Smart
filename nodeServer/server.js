@@ -55,6 +55,13 @@ app.get('/kennel/check', function (req, res) { // 안되는거~!
     res.json({ "msg": kennel });
 
 });
+app.get('/location/kakaoNew.js',function(req,res){
+    res.sendFile(path.join(__dirname,'main','kakaoNew.js'));
+})
+
+app.get('/location/map/test', function (req, res) {
+    res.sendFile(path.join(__dirname, 'main', 'kakaoNew.html'));
+});
 
 app.get('/location/map', function (req, res) {
 
