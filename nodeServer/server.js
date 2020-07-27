@@ -22,8 +22,8 @@ var js;
 var kennelStatus = 0;
 const fs = require('fs');
 
-
-fs.readFile('./main/kakaoNew.html', "utf8", function (err, data) {
+// html source without script tag
+fs.readFile('./main/kakaoNoScript.html', "utf8", function (err, data) {
     if (err) {
         throw err;
     }
