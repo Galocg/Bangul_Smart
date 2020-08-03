@@ -2,23 +2,23 @@
 
 ## /server/hello/:os
 ```json
-{"msg" : 문자열}
+{"msg" : "URL"}
 ```
 ## /home/check
 ```json
-{"status" : statusCode}
+{"status" : "statusCode"}
 ```
 ## /home/url
 ```json
-{"msg" : homeurl}
+{"msg" : "URL"}
 ```
 ## /kennel/check
 ```json
-{"status" : statusCode}
+{"status" : "statusCode"}
 ```
 ## /kennel/url
 ```json
-{"msg" : kennelurl}
+{"msg" : "URL"}
 ```
 ## /location/kakaoNew.js
 kakaoNew.js 반환
