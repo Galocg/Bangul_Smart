@@ -87,6 +87,28 @@ app.get('/location/map/test', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'kakaoNew.html'));
 });
 
+app.get('/json/get',function(req,res){
+    var status;
+    var msg;
+    httprequest('http://127.0.0.1:3000/test3', function(error, response, body){
+        if(!error && response.statusCode == 200){
+            status = 1;
+        }
+        else{
+            status = 0;
+        }
+        console.log(status);
+        var msg = JSON.parse(body);
+        console.log(msg.name, msg.id);
+    });
+    res.end();
+});
+
+app.get('/json/send',function(req,res){
+    res.json({"name":"ck","pwd":"1234"});
+    res.end();
+});
+
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'main.html'));
 });
