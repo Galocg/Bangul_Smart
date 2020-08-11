@@ -136,6 +136,11 @@ io.on('connection', function (socket) {
     })
 });
 
+/* webRTC 웹서버 */
+app.use(express.static(path.join(__dirname, '/../../react-webrtc/build')));
+app.get('/react-webrtc',function(req,res){
+    res.sendFile(path.join(__dirname,'/../../react-webrtc/build','index.html'))
+})
 // app.get('/kennel/movie', function(req,res){
 //     res.writeHead(200,{"Content-Type":"text/html"}); 
 //      fs.createReadStream("./test.html").pipe(response);
