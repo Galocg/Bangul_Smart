@@ -27,60 +27,60 @@ app.get('/server/hello/:os', function (req, res) {
     res.json({ "msg": req.params.os });
 });
 
-app.get('/home/check',function(req,res){
+app.get('/home/check', function (req, res) {
 
     var status;
 
-    httprequest(ras_home, function(error, response, body){
-    if(!error && response.statusCode == 200){
-        status = 1;
-    }
-    else{
-        status = 0;
-    }
-    var msg = {"status": status};
-    res.json(msg);
+    httprequest(ras_home, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            status = 1;
+        }
+        else {
+            status = 0;
+        }
+        var msg = { "status": status };
+        res.json(msg);
     });
 
 });
 
-app.get('/home/url',function(req,res){
-    res.json({'msg':ras_home});
+app.get('/home/url', function (req, res) {
+    res.json({ 'msg': ras_home });
 });
 
 
-app.get('/kennel/check',function(req,res){
+app.get('/kennel/check', function (req, res) {
     var status;
 
-    httprequest(ras_kennel, function(error, response, body){
-    if(!error && response.statusCode == 200){
-        status = 1;
-    }
-    else{
-        status = 0;
-    }
-    var msg = {"status": status};
-    res.json(msg);
+    httprequest(ras_kennel, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            status = 1;
+        }
+        else {
+            status = 0;
+        }
+        var msg = { "status": status };
+        res.json(msg);
     });
 
 });
 
-app.get('/kennel/url',function(req,res){
-    res.json({'msg':ras_kennel});
+app.get('/kennel/url', function (req, res) {
+    res.json({ 'msg': ras_kennel });
 });
 
-app.get('/parse/test',function(req,res){
+app.get('/parse/test', function (req, res) {
     var jb;
-    httprequest('https://www.naver.com', function(error, response, body){
-    var $ = cheerio.load(body);
-    jb = $('h1').html();
-    console.log(jb);
+    httprequest('https://www.naver.com', function (error, response, body) {
+        var $ = cheerio.load(body);
+        jb = $('h1').html();
+        console.log(jb);
     });
-    res.json({"t":jb});
+    res.json({ "t": jb });
 });
 
-app.get('/location/kakaoNew.js',function(req,res){
-    res.sendFile(path.join(__dirname,'main','kakaoNew.js'));
+app.get('/location/kakaoNew.js', function (req, res) {
+    res.sendFile(path.join(__dirname, 'main', 'kakaoNew.js'));
 });
 
 app.get('/location/map/test', function (req, res) {
@@ -96,6 +96,41 @@ app.listen(PORT, "0.0.0.0", function (req, res) {
 });
 
 
+/* webRTC용 socket 추가 */
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(3000);
+
+io.on('connection', function (socket) {
+    socket.on('join', function (data) {
+        socket.join(data.roomId);
+        socket.room = data.roomId;
+        const sockets = io.of('/').in().adapter.rooms[data.roomId];
+        if (sockets.length === 1) {
+            socket.emit('init')
+        } else {
+            if (sockets.length === 2) {
+                io.to(data.roomId).emit('ready')
+            } else {
+                socket.room = null
+                socket.leave(data.roomId)
+                socket.emit('full')
+            }
+
+        }
+    });
+    socket.on('signal', (data) => {
+        io.to(data.room).emit('desc', data.desc)
+    })
+    socket.on('disconnect', () => {
+        const roomId = Object.keys(socket.adapter.rooms)[0]
+        if (socket.room) {
+            io.to(socket.room).emit('disconnected')
+        }
+
+    })
+});
 
 // app.get('/kennel/movie', function(req,res){
 //     res.writeHead(200,{"Content-Type":"text/html"}); 
