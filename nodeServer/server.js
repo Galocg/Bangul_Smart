@@ -91,10 +91,11 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'main.html'));
 });
 
+/*
 app.listen(PORT, "0.0.0.0", function (req, res) {
     console.log('Server is running at:', PORT);
 });
-
+*/
 
 /* webRTC용 socket 추가 */
 var server = require('http').Server(app);
