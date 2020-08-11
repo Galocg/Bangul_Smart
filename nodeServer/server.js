@@ -105,6 +105,7 @@ server.listen(3000);
 
 io.on('connection', function (socket) {
     socket.on('join', function (data) {
+        console.log("on join")
         socket.join(data.roomId);
         socket.room = data.roomId;
         const sockets = io.of('/').in().adapter.rooms[data.roomId];
@@ -122,9 +123,11 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('signal', (data) => {
+        console.log("on signal")
         io.to(data.room).emit('desc', data.desc)
     })
     socket.on('disconnect', () => {
+        console.log("on disconnect")
         const roomId = Object.keys(socket.adapter.rooms)[0]
         if (socket.room) {
             io.to(socket.room).emit('disconnected')
