@@ -7,13 +7,15 @@ const bp = require('body-parser');
 
 const https = require('https'); // https 
 const app = express();
-const PORT = process.env.PORT = 80;
+const PORT = process.env.PORT = 443;
 
 const cors = require('cors');
 var corsOptions = {
     origin: ["http://localhost:8080", "file://com.bangul.app.webos-webos",
-    "https://jikjoo.github.io/react-webrtc/","https://localhost:80"
-    ]
+    "https://jikjoo.github.io/react-webrtc/","https://localhost:80",
+    "http://localhost:5000"
+    ],
+    credentials : true
 }
 
 
@@ -125,14 +127,18 @@ app.listen(PORT, "0.0.0.0", function (req, res) {
 //    console.log('Server is running at:', PORT);
 //});
 
-var server = https.Server(app);
-var io = require('socket.io')(server);
+//var server = https.Server(app);
+//var io = require('socket.io')(server);
 
-https.createServer(SSLkey, app).listen(PORT, function () {
+var server = https.createServer(SSLkey, app);
+server.listen(PORT, function () {
     console.log("HTTPS server listening on port " + PORT);
 });
 
+var io = require('socket.io').listen(server);
+
 io.on('connection', function (socket) {
+    console.log('on connection');
     socket.on('join', function (data) {
         console.log("on join")
         socket.join(data.roomId);
