@@ -140,7 +140,7 @@ var io = require('socket.io').listen(server);
 io.on('connection', function (socket) {
     console.log('on connection');
     socket.on('join', function (data) {
-        console.log("on join")
+        console.log(`on join ${data.roomId}`);
         socket.join(data.roomId);
         socket.room = data.roomId;
         const sockets = io.of('/').in().adapter.rooms[data.roomId];
