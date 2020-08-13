@@ -5,11 +5,16 @@ const fs = require('fs');
 const httprequest = require('request');
 const bp = require('body-parser');
 
+const https = require('https'); // https 
 const app = express();
-const PORT = process.env.PORT = 3000;
+const PORT = process.env.PORT = 80;
 
 const ras_home = 'https://www.naver.com';
 const ras_kennel = 'https://www.naver.com';
+
+var SSLkey = {
+    pfx: fs.readFileSync('./pfx/certificate.pfx')
+};
 
 app.use(express.static('main'));
 
@@ -87,9 +92,15 @@ app.get('/location/map/test', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'kakaoNew.html'));
 });
 
+app.get('/location/naverMap', function(req,res){
+    res.sendFile(path.join(__dirname, 'main', 'naverMap.html'));
+});
+
+
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'main.html'));
 });
+
 
 /*
 app.listen(PORT, "0.0.0.0", function (req, res) {
@@ -98,12 +109,18 @@ app.listen(PORT, "0.0.0.0", function (req, res) {
 */
 
 /* webRTC용 socket 추가 */
-var server = require('http').Server(app);
+//var server = require('http').Server(app); // http 일때 예전 코드
+
+//server.listen(PORT,function(){ http 일때 예전 코드
+//    console.log('Server is running at:', PORT);
+//});
+
+var server = https.Server(app);
 var io = require('socket.io')(server);
 
-server.listen(PORT,function(){
-    console.log('Server is running at:', PORT);
-});
+https.createServer(SSLkey, app).listen(PORT, function() {
+    console.log("HTTPS server listening on port " + PORT);
+  });
 
 io.on('connection', function (socket) {
     socket.on('join', function (data) {
