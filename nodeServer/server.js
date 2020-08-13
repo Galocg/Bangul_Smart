@@ -9,6 +9,14 @@ const https = require('https'); // https
 const app = express();
 const PORT = process.env.PORT = 80;
 
+const cors = require('cors');
+var corsOptions = {
+    origin: ["http://localhost:8080", "file://com.bangul.app.webos-webos",
+    "https://jikjoo.github.io/react-webrtc/","https://localhost:80"
+    ]
+}
+
+
 const ras_home = 'https://www.naver.com';
 const ras_kennel = 'https://www.naver.com';
 
@@ -19,11 +27,13 @@ var SSLkey = {
 app.use(express.static('main'));
 
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
+    //res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
     next();
 });
+
+app.use(cors(corsOptions));
 
 const logger = require('./main/middleware/logger.js');
 app.use(logger());
@@ -92,7 +102,7 @@ app.get('/location/map/test', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'kakaoNew.html'));
 });
 
-app.get('/location/naverMap', function(req,res){
+app.get('/location/naverMap', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'naverMap.html'));
 });
 
@@ -118,9 +128,9 @@ app.listen(PORT, "0.0.0.0", function (req, res) {
 var server = https.Server(app);
 var io = require('socket.io')(server);
 
-https.createServer(SSLkey, app).listen(PORT, function() {
+https.createServer(SSLkey, app).listen(PORT, function () {
     console.log("HTTPS server listening on port " + PORT);
-  });
+});
 
 io.on('connection', function (socket) {
     socket.on('join', function (data) {
@@ -157,8 +167,8 @@ io.on('connection', function (socket) {
 
 /* webRTC 웹서버 */
 app.use(express.static(path.join(__dirname, '/../../react-webrtc/build')));
-app.get('/react-webrtc',function(req,res){
-    res.sendFile(path.join(__dirname,'/../../react-webrtc/build','index.html'))
+app.get('/react-webrtc', function (req, res) {
+    res.sendFile(path.join(__dirname, '/../../react-webrtc/build', 'index.html'))
 })
 // app.get('/kennel/movie', function(req,res){
 //     res.writeHead(200,{"Content-Type":"text/html"}); 
