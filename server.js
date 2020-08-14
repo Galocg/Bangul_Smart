@@ -138,9 +138,10 @@ server.listen(PORT, function () {
 var io = require('socket.io').listen(server);
 
 io.on('connection', function (socket) {
-    console.log('on connection');
+    const clientIp = socket.request.connection.remoteAddress
+    console.log(`on connection ${clientIp}`);
     socket.on('join', function (data) {
-        console.log("on join")
+        console.log(`on join ${data.roomId} ${clientIp}`);
         socket.join(data.roomId);
         socket.room = data.roomId;
         const sockets = io.of('/').in().adapter.rooms[data.roomId];
