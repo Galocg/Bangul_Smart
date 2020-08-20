@@ -198,3 +198,6 @@ app.get('/react-webrtc', function (req, res) {
 // });
 
 
+// 네이버 위치 추적
+const geoLocation = require('./geoLocation')
+app.use('/location/geolocation',geoLocation)
