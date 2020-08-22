@@ -1,15 +1,18 @@
-const express = require('express');
+ const express = require('express');
 const path = require('path');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const httprequest = require('request');
 const bp = require('body-parser');
-
 const https = require('https'); // https 
 const app = express();
 const PORT = process.env.PORT = 443;
 
 const cors = require('cors');
+
+const ras_home = 'https://www.naver.com';
+const ras_kennel = 'https://www.naver.com';
+
 var corsOptions = {
     origin: ["http://localhost:8080", "file://com.bangul.app.webos-webos",
     "https://jikjoo.github.io/react-webrtc/","https://localhost:80",
@@ -18,13 +21,11 @@ var corsOptions = {
     credentials : true
 }
 
-
-const ras_home = 'https://www.naver.com';
-const ras_kennel = 'https://www.naver.com';
-
 var SSLkey = {
-    pfx: fs.readFileSync('./pfx/certificate.pfx')
+    pfx: fs.readFileSync('./pfx/key.pfx')
 };
+
+
 
 app.use(express.static('main'));
 
@@ -35,14 +36,23 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use(cors(corsOptions));
-
 const logger = require('./main/middleware/logger.js');
 app.use(logger());
+
+app.use(cors(corsOptions));
 
 app.get('/server/hello/:os', function (req, res) {
     res.json({ "msg": req.params.os });
 });
+
+
+
+app.get('/home/rotate', function(req,res){
+    var DOG_FLAG = req.query.DOG_FLAG; 
+    var ROTATE_ANGLE = req.query.ROTATE_ANGLE;                                                
+    res.json({'DOG_FLAG': DOG_FLAG, 'ROTATE_ANGLE':ROTATE_ANGLE});
+});
+   
 
 app.get('/home/check', function (req, res) {
 
@@ -102,6 +112,10 @@ app.get('/location/kakaoNew.js', function (req, res) {
 
 app.get('/location/map/test', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'kakaoNew.html'));
+});
+
+app.get('/location/naverMap.js', function (req, res) {
+    res.sendFile(path.join(__dirname, 'main', 'naverMap.js'));
 });
 
 app.get('/location/naverMap', function (req, res) {
@@ -199,5 +213,6 @@ app.get('/react-webrtc', function (req, res) {
 
 
 // 네이버 위치 추적
-const geoLocation = require('./geoLocation')
+const geoLocation = require('./geoLocation');
+const { json } = require('body-parser');
 app.use('/location/geolocation',geoLocation)
