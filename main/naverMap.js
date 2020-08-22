@@ -64,9 +64,9 @@ var map = new naver.maps.Map(targetMap, {
     zoom: 15
 });
 
-var cafeHtml = '<a href="#" class="control"><span class="cafe inner">애견카페</span></a>';
-var resHtml = '<a href="#" class="control"><span class="restaurant inner">식당</span></a>';
-var parkHtml = '<a href="#" class="control"><span class="park inner">공원</span></a>';
+var cafeHtml = '<div class="control"><span class="cafe inner">애견카페</span></div>';
+var resHtml = '<div class="control"><span class="restaurant inner">식당</span></div>';
+var parkHtml = '<div class="control"><span class="park inner">공원</span></div>';
 
 naver.maps.Event.once(map, 'init_stylemap', function() {
 
@@ -190,7 +190,7 @@ places.forEach(function(place, idx){
         });
         
 
-    var contentHtml = '<div style="width:160px;text-align:center;padding:10px;">['+category[place.category]+'] <b>'+ place.name +'</b><br /><img src="./star.jpg" width="20px" height="20px" alt="rating"><span> 4.5</span></div>'
+    var contentHtml = '<div style="width:160px;text-align:center;padding:10px;">['+category[place.category]+'] <b>'+ place.name +'</b><br /><img src="https://13.124.126.131/star.jpg" width="20px" height="20px" alt="rating"><span> 4.5</span></div>'
     
     var infoWindow = new naver.maps.InfoWindow({
         content: contentHtml

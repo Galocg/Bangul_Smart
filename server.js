@@ -10,8 +10,14 @@ const PORT = process.env.PORT = 443;
 
 const cors = require('cors');
 
-const ras_home = 'https://www.naver.com';
-const ras_kennel = 'https://www.naver.com';
+var get_ROTATE_ANGLE = 0;
+var get_DOG_FLAG =  0;
+var home_lastGetTime = 0;
+var kennel_lastGetTime = 0;
+
+var ras_kennel = 'www.naver.com';
+var ras_home = 'www.naver.com';
+
 
 var corsOptions = {
     origin: ["http://localhost:8080", "file://com.bangul.app.webos-webos",
@@ -21,7 +27,7 @@ var corsOptions = {
     credentials : true
 }
 
-var SSLkey = {
+var SSLkey = { // SSL 인증서
     pfx: fs.readFileSync('./pfx/key.pfx')
 };
 
@@ -41,58 +47,69 @@ app.use(logger());
 
 app.use(cors(corsOptions));
 
-app.get('/server/hello/:os', function (req, res) {
+app.get('/server/hello/:os', function (req, res) { // 메인서버의 상태를 확인하는 URI
     res.json({ "msg": req.params.os });
 });
 
-
-
-app.get('/home/rotate', function(req,res){
+app.get('/home/state', function(req,res){ // 메인서버에서 홈디바이스 상태 체크 및 데이터 가져오는 URI
     var DOG_FLAG = req.query.DOG_FLAG; 
-    var ROTATE_ANGLE = req.query.ROTATE_ANGLE;                                                
+    var ROTATE_ANGLE = req.query.ROTATE_ANGLE;
+    get_ROTATE_ANGLE = ROTATE_ANGLE
+    get_DOG_FLAG = DOG_FLAG
+    home_lastGetTime = new Date();
     res.json({'DOG_FLAG': DOG_FLAG, 'ROTATE_ANGLE':ROTATE_ANGLE});
 });
-   
 
-app.get('/home/check', function (req, res) {
-
-    var status;
-
-    httprequest(ras_home, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            status = 1;
-        }
-        else {
-            status = 0;
-        }
-        var msg = { "status": status };
-        res.json(msg);
-    });
-
+app.get('/home/check', function(req,res){ // 카디바이스에서 홈디바이스 상태를 체크하기 위한 URI
+    var nowTime = new Date();
+    var diff = nowTime.getTime() - home_lastGetTime.getTime();
+    if(diff<10000){
+        console.log(diff);
+        res.json({"status":1});
+    }
+    else{
+        console.log(diff);
+        res.json({"status":0});
+    }
 });
 
-app.get('/home/url', function (req, res) {
+
+app.get('/home/device', function(req,res){ // 메인서버에서 카메라 각도 제어를 위한 URI
+    var NOW_ANGLE = req.query.NOW_ANGLE; 
+    var ROTATE_ANGLE =  get_ROTATE_ANGLE; 
+    var DHT_H = req.query.DHT_H; 
+    var DHT_T = req.query.DHT_T; 
+    var FEED = req.query.FEED; 
+    var DOG_FLAG = get_DOG_FLAG; 
+    home_lastGetTime = new Date(); // 만약에 rotate angle 이나  dog _ flag 가 존재하면 그것으로 바꿔줘야함
+    res.json({'NOW_ANGLE' : NOW_ANGLE , 'ROTATE_ANGLE' : ROTATE_ANGLE ,  'DHT_H' : DHT_H , 'DHT_T' : DHT_T , 'FEED' : FEED , 'DOG_FLAG' : DOG_FLAG}); 
+});
+
+app.get('/home/url', function (req, res) { // 홈디바이스 주소 전송용
     res.json({ 'msg': ras_home });
 });
 
-
-app.get('/kennel/check', function (req, res) {
-    var status;
-
-    httprequest(ras_kennel, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            status = 1;
-        }
-        else {
-            status = 0;
-        }
-        var msg = { "status": status };
-        res.json(msg);
-    });
-
+app.get('/kennel/state', function(req,res){ // 메인서버에서 켄넬의 현재 상태를 체크하기 위한 URI
+    kennel_lastGetTime = new Date(); 
+    res.send('<h1>GET KENNEL STATE TIME<h1>');
+    res.end();
 });
 
-app.get('/kennel/url', function (req, res) {
+app.get('/kennel/check', function(req,res){ // 카디바이스에서 홈디바이스 상태를 체크하기 위한 URI
+    var nowTime = new Date();
+    var diff = nowTime.getTime() - kennel_lastGetTime.getTime();
+    if(diff<10000){
+        console.log(diff);
+        res.json({"status":1});
+    }
+    else{
+        console.log(diff);
+        res.json({"status":0});
+    }
+});
+
+
+app.get('/kennel/url', function (req, res) { // 켄넬 주소 전달용
     res.json({ 'msg': ras_kennel });
 });
 
@@ -106,46 +123,24 @@ app.get('/parse/test', function (req, res) {
     res.json({ "t": jb });
 });
 
-app.get('/location/kakaoNew.js', function (req, res) {
-    res.sendFile(path.join(__dirname, 'main', 'kakaoNew.js'));
-});
-
-app.get('/location/map/test', function (req, res) {
-    res.sendFile(path.join(__dirname, 'main', 'kakaoNew.html'));
-});
-
-app.get('/location/naverMap.js', function (req, res) {
+app.get('/location/naverMap.js', function (req, res) { // 카디바이스에게 네이버지도 전송
     res.sendFile(path.join(__dirname, 'main', 'naverMap.js'));
 });
 
-app.get('/location/naverMap', function (req, res) {
+app.get('/location/naverMap', function (req, res) { // 카디바이스에게 네이버지도 전송
     res.sendFile(path.join(__dirname, 'main', 'naverMap.html'));
 });
 
+app.get('/star.jpg', function(req,res){ 
+    res.sendFile(path.join(__dirname, 'main', 'star.jpg'));
+});
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'main.html'));
 });
 
-
-/*
-app.listen(PORT, "0.0.0.0", function (req, res) {
-    console.log('Server is running at:', PORT);
-});
-*/
-
-/* webRTC용 socket 추가 */
-//var server = require('http').Server(app); // http 일때 예전 코드
-
-//server.listen(PORT,function(){ http 일때 예전 코드
-//    console.log('Server is running at:', PORT);
-//});
-
-//var server = https.Server(app);
-//var io = require('socket.io')(server);
-
-var server = https.createServer(SSLkey, app);
-server.listen(PORT, function () {
+var server = https.createServer(SSLkey, app); // https 서버 시작
+server.listen(PORT, "0.0.0.0",function () {
     console.log("HTTPS server listening on port " + PORT);
 });
 
