@@ -1,0 +1,77 @@
+.control {
+    z-index: 100;
+    overflow: hidden;
+    display: inline-block;
+    position: relative;
+    top: 7px;
+    left: 5px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(58,70,88,.45);
+    border-radius: 2px;
+    background: #fcfcfd;
+    text-align: center;
+    -webkit-background-clip: padding;
+    background-clip: padding-box;
+}
+
+.cafe {
+    overflow: hidden;
+    display: inline-block;
+    color: transparent!important;
+    vertical-align: top;
+    background-image: url('./cafe.jpg');
+    background-size: contain !important;
+    background-repeat : no-repeat;
+    background-position : center;
+    background-position: 50% 70% !important;
+    background-size: 200px 200px;
+    -webkit-background-size: 200px 200px; 
+}
+
+.restaurant {
+    overflow: hidden;
+    display: inline-block;
+    color: transparent!important;
+    vertical-align: top;
+    background-image: url('./res.jpg');
+    background-size: contain !important;
+    background-repeat : no-repeat;
+    background-position : center;
+    background-position: 50% 70% !important;
+    background-size: 200px 200px;
+    -webkit-background-size: 200px 200px; 
+}
+
+.park {
+    overflow: hidden;
+    display: inline-block;
+    color: transparent!important;
+    vertical-align: top;
+    background-image: url('./park.jpg');
+    background-size: contain !important;
+    background-repeat : no-repeat;
+    background-position : center;
+    background-position: 50% 70% !important;
+    background-size: 200px 200px;
+    -webkit-background-size: 200px 200px; 
+}
+
+.inner {
+    width: 20px;
+    height: 20px;
+    margin: 7px 0 0 0;
+    background-position: -153px -31px;
+}
+
+/*
+.park {
+    overflow: hidden;
+    display: inline-block;
+    color: transparent!important;
+    vertical-align: top;
+    background: url(https://ssl.pstatic.net/static/maps/m/spr_trff_v6.png) 0 0;
+    background-size: 200px 200px;
+    -webkit-background-size: 200px 200px; 
+}
+*/
