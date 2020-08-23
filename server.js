@@ -1,6 +1,7 @@
  const express = require('express');
 const path = require('path');
 const cheerio = require('cheerio');
+const logger = require('./main/middleware/winlogger.js');
 const fs = require('fs');
 const httprequest = require('request');
 const bp = require('body-parser');
@@ -31,8 +32,6 @@ var SSLkey = { // SSL 인증서
     pfx: fs.readFileSync('./pfx/key.pfx')
 };
 
-
-
 app.use(express.static('main'));
 
 app.use(function (req, res, next) {
@@ -42,7 +41,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-const logger = require('./main/middleware/logger.js');
 app.use(logger());
 
 app.use(cors(corsOptions));
