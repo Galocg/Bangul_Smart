@@ -21,7 +21,7 @@ const logger = winston.createLogger({
     ]
 });
 
-  
+
 
 var logging = () => (req, res, next) =>{
     var data = moment().format('YYYY-MM-DD HH:mm:ss');
