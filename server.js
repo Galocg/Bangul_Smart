@@ -23,7 +23,7 @@ var ras_home = 'www.naver.com';
 var corsOptions = {
     origin: ["http://localhost:8080", "file://com.bangul.app.webos-webos",
     "https://jikjoo.github.io/react-webrtc/","https://localhost:80",
-    "http://localhost:5000"
+    "http://localhost:5000","https://bangul-petcare.web.app","https://bangul.web.app"
     ],
     credentials : true
 }
