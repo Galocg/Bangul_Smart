@@ -1,4 +1,5 @@
 const winston = require('winston');
+require('winston-daily-rotate-file');
 const { format } = require('winston');
 
 const moment = require('moment');
@@ -8,7 +9,12 @@ moment.tz.setDefault("Asia/Seoul");
 
 var partdata = moment().format('YYYY-MM-DD');
 
-var fname = './log/'+partdata+'.log';
+
+var dailyLog = new winston.transports.DailyRotateFile({
+    level : 'info',
+    filename: './log/%DATE%.log',
+    datePattern: 'YYYY-MM-DD',
+});
 
 const logger = winston.createLogger({
     format: format.combine(
@@ -17,7 +23,7 @@ const logger = winston.createLogger({
     ),
     transports: [
       new winston.transports.Console(),
-      new winston.transports.File({ filename: fname })
+      dailyLog
     ]
 });
 
