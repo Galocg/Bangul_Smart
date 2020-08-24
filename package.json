@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
-    "forever" : "sudo forever start --minUptime 1000 --spinSleepTime 1000 server.js"
+    "forever" : "forever start -c nodemon server.js --exitcrash"
   },
   "author": "",
   "license": "ISC",
