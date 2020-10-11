@@ -6,14 +6,14 @@ var markers = [],
     polylines = [],
     category = ['카페', '식당', '공원'];
 
-places.push({category: 0, name: '적당',Lat:37.5664910, Lng:126.9810422});
-places.push({category: 0, name: '리에제',Lat:37.5648132, Lng:126.9764594});
-places.push({category: 0, name: '커피엔시가렛',Lat:37.5627337, Lng:126.9740244});
-places.push({category: 0, name: '블루보틀',Lat:37.5694936, Lng:126.9788681});
+places.push({category: 0, name: '적당',Lat:37.5664910, Lng:126.9810422, score:3.2});
+places.push({category: 0, name: '리에제',Lat:37.5648132, Lng:126.9764594, score:3.6});
+places.push({category: 0, name: '커피엔시가렛',Lat:37.5627337, Lng:126.9740244, score:4.2});
+places.push({category: 0, name: '블루보틀',Lat:37.5694936, Lng:126.9788681, score:4.8});
 
-places.push({category: 1, name: '라카티나',Lat:37.5663080, Lng:126.9799748});
-places.push({category: 1, name: '주옥',Lat:37.5647520, Lng:126.9780465});
-places.push({category: 1, name: '이나니와요스케',Lat:37.5653757, Lng:126.9792023});
+places.push({category: 1, name: '라카티나',Lat:37.5663080, Lng:126.9799748, score:3.5});
+places.push({category: 1, name: '주옥',Lat:37.5647520, Lng:126.9780465, score:3.8});
+places.push({category: 1, name: '이나니와요스케',Lat:37.5653757, Lng:126.9792023, score:4.2});
 
 polypaths.push([ // 적당
     new naver.maps.LatLng(37.5667932, 126.9775137),
@@ -190,7 +190,7 @@ places.forEach(function(place, idx){
         });
         
 
-    var contentHtml = '<div style="width:160px;text-align:center;padding:10px;">['+category[place.category]+'] <b>'+ place.name +'</b><br /><img src="https://13.124.126.131/star.jpg" width="20px" height="20px" alt="rating"><span> 4.5</span></div>'
+    var contentHtml = '<div style="width:160px;text-align:center;padding:10px;">['+category[place.category]+'] <b>'+ place.name +'</b><br /><img src="https://13.124.126.131/star.jpg" width="20px" height="20px" alt="rating"><span>'+place.score+'</span></div>'
     
     var infoWindow = new naver.maps.InfoWindow({
         content: contentHtml

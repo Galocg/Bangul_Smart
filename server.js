@@ -16,8 +16,7 @@ var get_DOG_FLAG =  0;
 var home_lastGetTime = 0;
 var kennel_lastGetTime = 0;
 
-var ras_kennel = 'www.naver.com';
-var ras_home = 'www.naver.com';
+var dataURL = '';
 
 
 var corsOptions = {
@@ -32,7 +31,10 @@ var SSLkey = { // SSL 인증서
     pfx: fs.readFileSync('./pfx/key.pfx')
 };
 
+app.use(bp.json());
+
 app.use(express.static('main'));
+
 
 app.use(function (req, res, next) {
     //res.header("Access-Control-Allow-Origin", "*");
@@ -40,6 +42,8 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
     next();
 });
+
+
 
 app.use(logger());
 
@@ -49,7 +53,7 @@ app.get('/server/hello/:os', function (req, res) { // 메인서버의 상태를 
     res.json({ "msg": req.params.os });
 });
 
-app.get('/home/state', function(req,res){ // 메인서버에서 홈디바이스 상태 체크 및 데이터 가져오는 URI
+app.post('/home/state', function(req,res){ // 메인서버에서 홈디바이스 상태 체크 및 데이터 가져오는 URI
     var DOG_FLAG = req.query.DOG_FLAG; 
     var ROTATE_ANGLE = req.query.ROTATE_ANGLE;
     get_ROTATE_ANGLE = ROTATE_ANGLE
@@ -83,9 +87,6 @@ app.get('/home/device', function(req,res){ // 메인서버에서 카메라 각�
     res.json({'NOW_ANGLE' : NOW_ANGLE , 'ROTATE_ANGLE' : ROTATE_ANGLE ,  'DHT_H' : DHT_H , 'DHT_T' : DHT_T , 'FEED' : FEED , 'DOG_FLAG' : DOG_FLAG}); 
 });
 
-app.get('/home/url', function (req, res) { // 홈디바이스 주소 전송용
-    res.json({ 'msg': ras_home });
-});
 
 app.get('/kennel/state', function(req,res){ // 메인서버에서 켄넬의 현재 상태를 체크하기 위한 URI
     kennel_lastGetTime = new Date(); 
@@ -106,11 +107,6 @@ app.get('/kennel/check', function(req,res){ // 카디바이스에서 홈디바�
     }
 });
 
-
-app.get('/kennel/url', function (req, res) { // 켄넬 주소 전달용
-    res.json({ 'msg': ras_kennel });
-});
-
 app.get('/parse/test', function (req, res) {
     var jb;
     httprequest('https://www.naver.com', function (error, response, body) {
@@ -120,6 +116,45 @@ app.get('/parse/test', function (req, res) {
     });
     res.json({ "t": jb });
 });
+
+app.post('/kennel/getImage', function(req,res){
+    dataURL = req.body.data;
+    console.log(dataURL);
+    
+    var file = {'file': dataURL};
+    httprequest.post({
+    headers: {'content-type' : 'application/json'},
+    url : 'http://52.79.48.232:5000/ml/learn',
+    body : file,
+    json: true
+    }, function(error, response, body){
+        console.log(body);
+    });
+
+    res.send({'file':dataURL});
+    res.end();
+});
+
+app.post('/postTest', function(req,res){
+    res.json({"post":"test"});
+});
+
+
+app.get('/kennel/dogVomitTest', function(req,res){
+    var file = {'file':'hi'};
+    httprequest.post({
+       headers: {'content-type' : 'application/json'},
+       url : 'http://52.79.48.232:5000/ml/learn',
+       body : file,
+       json: true
+    }, function(error, response, body){
+        console.log(response);
+    });
+
+    res.end();
+});
+
+
 
 app.get('/location/naverMap.js', function (req, res) { // 카디바이스에게 네이버지도 전송
     res.sendFile(path.join(__dirname, 'main', 'naverMap.js'));
@@ -136,6 +171,8 @@ app.get('/star.jpg', function(req,res){
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'main', 'main.html'));
 });
+
+
 
 var server = https.createServer(SSLkey, app); // https 서버 시작
 server.listen(PORT, "0.0.0.0",function () {
@@ -184,26 +221,6 @@ app.use(express.static(path.join(__dirname, '/../../react-webrtc/build')));
 app.get('/react-webrtc', function (req, res) {
     res.sendFile(path.join(__dirname, '/../../react-webrtc/build', 'index.html'))
 })
-// app.get('/kennel/movie', function(req,res){
-//     res.writeHead(200,{"Content-Type":"text/html"}); 
-//      fs.createReadStream("./test.html").pipe(response);
-// });
-
-
-// app.get('/kennel/movie', function (req, res) { // 채운 수정
-//     var stream = fs.createReadStream('http://192.168.43.77:5000/video_feed');
-//     //2. 잘게 쪼개진 stream이 몇번 전송되는지 확인하는  count
-//     var count = 0;
-//     //3. 잘게 쪼개진 data를 전송 할 수 있으면 data 이벤트를 발생시킨다
-//     stream.on('data', function(data){
-//         count = count +1;
-//         console.log('data count =' + count);
-//         //3.1 data 이벤트 발생되면 해당 data를 클라이언트로 전송한다.
-//         res.write(data);
-//     });
-//     res.end();
-// });
-
 
 // 네이버 위치 추적
 const geoLocation = require('./geoLocation');
